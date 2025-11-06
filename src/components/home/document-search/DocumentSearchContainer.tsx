@@ -9,11 +9,13 @@ import Textfield from "../../form-fields/Textfield";
 import ListSkeleton from "../../ui/skeletons/ListSkeleton";
 import ResultCard from "../search-result/ResultCard";
 import EmptyState from "./empty-state/EmptyState";
+import ErrorState from "./error/ErrorState";
 
 const DocumentSearchContainer = () => {
 	const [query, setQuery] = useState("");
 	const [data, setData] = useState<GenerateResponse["data"] | null>(null);
 	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState<string | null>(null);
 	const [lastSearchedAt, setLastSearchedAt] = useState<Date | null>(null);
 
 	async function onSubmit(e: React.FormEvent) {
@@ -21,10 +23,12 @@ const DocumentSearchContainer = () => {
 		const q = query.trim();
 		if (!q) {
 			setData(null);
+			setError(null);
 			return;
 		}
 		setLoading(true);
 		setData(null);
+		setError(null);
 
 		try {
 			const res = await generate(q);
@@ -35,6 +39,7 @@ const DocumentSearchContainer = () => {
 				duration: 3000,
 			});
 		} catch (err: unknown) {
+			setError((err as Error)?.message ?? "Something went wrong");
 			toast.error((err as Error)?.message ?? "Something went wrong");
 		} finally {
 			setLoading(false);
@@ -90,10 +95,17 @@ const DocumentSearchContainer = () => {
 			)}
 
 			{/* Empty state */}
-			{!loading && !data && <EmptyState />}
+			{!loading && !data && !error && <EmptyState />}
+
+			{/* Error state */}
+			{!loading && !data && error && (
+				<div className='max-w-3xl mx-auto py-4'>
+					<ErrorState title={error ?? "Something went wrong"} />
+				</div>
+			)}
 
 			{/* Results */}
-			{!loading && data && (
+			{!loading && data && !error && (
 				<section className='mt-8 space-y-4 max-w-3xl mx-auto'>
 					<div className='rounded-xl border bg-white py-3 px-5 border-gray-300'>
 						<h2 className='text-base font-semibold'>Summary</h2>
