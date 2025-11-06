@@ -11,7 +11,7 @@ const EmptyState = ({ className }: { className?: string }) => {
 				Start with a question
 			</h2>
 			<p className='mt-1 text-sm'>
-				Try “termination for material breach” or “governing law”.
+				Try “termination for material breach” or confidentiality obligations”.
 			</p>
 		</div>
 	);

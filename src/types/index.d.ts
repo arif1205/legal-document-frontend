@@ -2,7 +2,6 @@ export type Match = {
 	docId: string;
 	title: string;
 	score: number;
-	snippet: string;
 	text: string;
 };
 
@@ -13,6 +12,5 @@ export type GenerateResponse = {
 		query: string;
 		summary: string;
 		matches: Match[];
-		facts?: unknown[];
 	};
 };
